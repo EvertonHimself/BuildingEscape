@@ -22,8 +22,8 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 	InitialYaw = GetOwner()->GetActorRotation().Yaw;
 	CurrentYaw = InitialYaw;
-	//TargetYaw = InitialYaw + TargetYaw;
-	TargetYaw += InitialYaw; // The += is know as compound assignment operator.
+	//OpenAngle = InitialYaw + OpenAngle;
+	OpenAngle += InitialYaw; // The += is know as compound assignment operator.
 
 	if (!PressurePlate)
 	{
@@ -54,8 +54,8 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	}
 
 	/*float CurrentYaw = GetOwner()->GetActorRotation().Yaw;
-	FRotator OpenDoor(0.f, TargetYaw, 0.f);
-	OpenDoor.Yaw = FMath::FInterpTo(CurrentYaw, TargetYaw, DeltaTime, 2);
+	FRotator OpenDoor(0.f, OpenAngle, 0.f);
+	OpenDoor.Yaw = FMath::FInterpTo(CurrentYaw, OpenAngle, DeltaTime, 2);
 	GetOwner()->SetActorRotation(OpenDoor);*/
 }
 
@@ -63,7 +63,7 @@ void UOpenDoor::OpenDoor(float DeltaTime)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("%S"), *GetOwner()->GetActorRotation().ToString());
 	//UE_LOG(LogTemp, Warning, TEXT("Yaw is: %f"), GetOwner()->GetActorRotation().Yaw);
-	CurrentYaw = FMath::Lerp(CurrentYaw, TargetYaw, DeltaTime * 0.8f);
+	CurrentYaw = FMath::Lerp(CurrentYaw, OpenAngle, DeltaTime * DoorOpenSpeed);
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
 	GetOwner()->SetActorRotation(DoorRotation);
@@ -73,7 +73,7 @@ void UOpenDoor::CloseDoor(float DeltaTime)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("%S"), *GetOwner()->GetActorRotation().ToString());
 	//UE_LOG(LogTemp, Warning, TEXT("Yaw is: %f"), GetOwner()->GetActorRotation().Yaw);
-	CurrentYaw = FMath::Lerp(CurrentYaw, InitialYaw, DeltaTime * 2.f);
+	CurrentYaw = FMath::Lerp(CurrentYaw, InitialYaw, DeltaTime * DoorCloseSpeed);
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
 	GetOwner()->SetActorRotation(DoorRotation);
