@@ -41,4 +41,7 @@ private:
 
 	// Return the Line Trace End.
 	FVector GetThePlayersReach() const;
+
+	// Get players position in world.
+	FVector GetPlayersWorldPosition() const;
 };
