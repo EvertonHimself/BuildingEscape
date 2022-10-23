@@ -38,7 +38,7 @@ void UGrabber::FindPhysicsHandle()
 {
 	// Check for the physics handle component.
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (PhysicsHandle == nullptr)
+	if (!PhysicsHandle)
 	{
 		// Physics is found.
 		UE_LOG(LogTemp, Error, TEXT("No physics handle found on %s!"), *GetOwner()->GetName());
@@ -49,13 +49,19 @@ void UGrabber::Grab()
 {
 	FHitResult HitResult = GetFirstPhysicsBodyInReach();
 	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
+	AActor* ActorHit = HitResult.GetActor();
 
 	UE_LOG(LogTemp, Warning, TEXT("Grabber Pressed"));
 	// Try and reach any actors with physics body collision channel set.
 
 	// If we hit something then attach the physics handle.
-	if (HitResult.GetActor())
+	//if (HitResult.GetActor())
+	if (ActorHit)
 	{
+		if (!PhysicsHandle)
+		{
+			return;
+		}
 		// Attach physics handle.
 		PhysicsHandle->GrabComponentAtLocation
 		(
@@ -78,6 +84,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
 	// If the physics handle is attach
+	if (!PhysicsHandle) { return; }
 	if (PhysicsHandle->GrabbedComponent) 
 	{
 		// Move the object we are holding.
@@ -113,7 +120,7 @@ FVector UGrabber::GetPlayersWorldPosition() const
 	);
 
 	// Draw a line from player showing the reach.
-	return PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
+	return PlayerViewPointLocation;
 }
 
 FVector UGrabber::GetThePlayersReach() const 
